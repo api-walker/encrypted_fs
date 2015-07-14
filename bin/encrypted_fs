@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+require 'encrypted_fs'
+
+if (ARGV.size < 2 or ARGV.size > 3)
+  puts "Usage: #{$0} /mountpoint /mirror_directory  [password]"
+else
+  mountpoint = ARGV[0]
+  directory = ARGV[1]
+  password = ''
+  if EncryptedFS::ENCRYPT_STATE != EncryptedFS::ENCRYPT_MODE_NONE
+    if ARGV.size == 2
+      require 'io/console'
+      print 'Password: '
+      begin
+        password = STDIN.noecho(&:gets).chomp
+      rescue
+        password = STDIN.gets.chomp
+      end
+    else
+      password = ARGV[2]
+    end
+  end
+  unless File.directory?(directory) && File.directory?(mountpoint)
+    puts "Usage: #{directory} and #{mountpoint} must be directories."
+  else
+    FuseFS.start(EncryptedFS.new(directory, mountpoint, password), mountpoint) # This doesn't return until we're unmounted.
+  end
+end
