@@ -12,7 +12,7 @@ Clone it and build with:
 
     $ encrypted_fs /mountpoint /mirror_directory  [password]
 
-Note: If no password is entered, then you will be prompted to enter one.
+Note: If no password is entered, then you will be prompted.
 
 ## Security
 - All encryption is done in RAM, so sensitive data will never be written to the disk without being encrypted (if enabled).
