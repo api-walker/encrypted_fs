@@ -40,6 +40,7 @@ class EncryptedFS < FuseFS::FuseDir
 
     @crypto_helper = CryptoHelper.new(password)
 
+    puts ""
     debug_log("Info: Building stats...") if @debug_mode != DEBUG_MODE_NONE
 
     # disable I/O messages while indexing

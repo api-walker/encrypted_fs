@@ -2,6 +2,7 @@
 /.yardoc
 /.idea
 /Gemfile.lock
+/encrypted_fs-*
 /_yardoc/
 /coverage/
 /doc/
