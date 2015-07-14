@@ -15,11 +15,11 @@ Clone it and build with:
 Note: If no password is entered, then you will be prompted to enter one.
 
 ## Security
-All encryption is done in RAM, so sensitive data will never written to the disk without being encrypted (if enabled).
+- All encryption is done in RAM, so sensitive data will never be written to the disk without being encrypted (if enabled).
 
 ## Performance
-Original speed: 37 MB/s
-Speed with full encryption mode: 14 MB/s
+- Original speed: 37 MB/s
+- Speed with full encryption mode: 14 MB/s
 
 ## Bugs
 - Large files can slow your system.
