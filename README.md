@@ -1,15 +1,19 @@
-# EncryptedFs
+# EncryptedFs (FUSE)
 
-This filesystem was created to learn about FUSE.
-It encrypts the data of the mountpoint on the fly and saves it to the destination directory.
+It is implemented in ruby with rfusefs and its encryption is based on AES-256 CBC-mode.
+Data of the mountpoint is encrypted on the fly and saved to the destination directory.
 
 ## Installation
 Clone it and build with:
 
+    $ cd [your-folder]
+    $ git clone https://github.com/api-walker/encrypted_fs.git
     $ gem build encrypted_fs.gemspec
+    $ gem install encrypted_fs-0.1.0.gem
 
 ## Usage
-
+Destination directory must be empty at first time!
+    
     $ encrypted_fs /mountpoint /mirror_directory  [password]
     
 ## Options
@@ -25,9 +29,15 @@ Clone it and build with:
 ## Security
 - All encryption is done in RAM, so sensitive data will never be written to the disk without being encrypted (if enabled).
 
-## Performance
-- Original speed: 37 MB/s
-- Speed with full encryption mode: 14 MB/s
+## Performance 
+
+### Setup
+- multiple files with varying size
+- Encryption: Filename + content
+
+### Results
+- Original speed:   37 MB/s
+- EncryptedFs:      14 MB/s
 
 ## Bugs
 - Large files can slow your system.
