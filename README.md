@@ -11,8 +11,16 @@ Clone it and build with:
 ## Usage
 
     $ encrypted_fs /mountpoint /mirror_directory  [password]
+    
+## Options
+### Encryption
+- None
+- Content only
+- Filename + content
 
-Note: If no password is entered, then you will be prompted.
+### Erasing
+- None
+- Overwrite n-times
 
 ## Security
 - All encryption is done in RAM, so sensitive data will never be written to the disk without being encrypted (if enabled).
