@@ -23,15 +23,26 @@ class EncryptedFS < FuseFS::FuseDir
   ENCRYPT_MODE_CONTENT = 1
   ENCRYPT_MODE_ALL = 2
 
+  # delete modes
+  DELETE_MODE_NORMAL = 0
+  DELETE_MODE_SECURE = 1 # can slow delete operations
+
   # setup
   DEBUG_STATE = DEBUG_MODE_EXTENDED
   ENCRYPT_STATE = ENCRYPT_MODE_ALL
+  DELETE_STATE = DELETE_MODE_SECURE
 
   def initialize(mirror_dir, mountpoint, password, stats = nil)
+    # SETUP
     # debug?
     @debug_mode = DEBUG_STATE
+
     # use encryption?
     @encrypt_mode = ENCRYPT_STATE
+
+    # use extended delete? => not supported by GUI explorers => they move file to .Trash
+    @delete_mode = DELETE_STATE
+    @delete_rounds = 3 # overwrite file 3 times
 
     @mirror_dir = mirror_dir
     @mountpoint = mountpoint
@@ -152,10 +163,16 @@ class EncryptedFS < FuseFS::FuseDir
   end
 
   def delete(path)
-    debug_log("Deleting: #{path}") if @debug_mode == DEBUG_MODE_EXTENDED
-
     @stats.adjust(size(virtual_to_real_path(path)), -1)
-    File.delete(virtual_to_real_path(path))
+    if @delete_mode == DELETE_MODE_NORMAL
+      debug_log("Deleting: #{path}") if @debug_mode == DEBUG_MODE_EXTENDED
+
+      File.delete(virtual_to_real_path(path))
+    else
+      debug_log("Secure deleting: #{path}") if @debug_mode == DEBUG_MODE_EXTENDED
+
+      secure_delete(path)
+    end
   end
 
   #mkdir - does not make intermediate dirs!
@@ -197,6 +214,22 @@ class EncryptedFS < FuseFS::FuseDir
   # all write activity
   def mount_user?
     Process.uid == FuseFS.reader_uid
+  end
+
+  def secure_delete(path)
+    file_location = virtual_to_real_path(path)
+
+    size = File.size(file_location) if file?(path)
+    size ||= 0
+
+    if size > 0
+      random_generator = Random.new(Time.now.to_i)
+      (0...@delete_rounds).each do |i|
+        File.write(file_location, random_generator.bytes(size))
+      end
+    end
+
+    File.delete(file_location)
   end
 
   def virtual_to_real_path(path)
